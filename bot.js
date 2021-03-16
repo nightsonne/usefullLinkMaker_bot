@@ -2,18 +2,20 @@ const { Telegraf } = require('telegraf');
 require('dotenv').config();
 const fetch = require("node-fetch");
 
-const { welcomeMessage } = require('./const');
+const { welcomeMessage, helpMessage } = require('./const');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.start((ctx) => ctx.reply(welcomeMessage));
-
+bot.help((ctx) => {
+  ctx.reply(helpMessage);
+});
 bot.on('text', async (ctx) => {
 
   let msg = ctx.message.text;
 
   try {
-    const regex = /[0-9]{1,6}/g;
+    const regex = /[0-9]{6}/g;
     const testId = msg.match(regex).join('_');
     const date = ctx.message.date + 86400 * 30;
     const url = `https://yandex.ru/ecoo/safe/sign?test-id=${testId}&ttl=86400&ts=${date}`
@@ -40,7 +42,7 @@ COM: https://yandex.com/ecoo/safe/redirect?key=${data}&to=https://yandex.com/new
       });
 
   } catch {
-    ctx.reply(`${ctx.message.from.first_name}, а где test-id?\nЯ не умею делать ссылки без test-id, у меня лапки 😿 `);
+    ctx.reply(`Извини, ${ctx.message.from.first_name}, без test-id у меня лапки 😿 `);
   }
 });
 
